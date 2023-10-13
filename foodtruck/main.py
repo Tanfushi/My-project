@@ -79,13 +79,12 @@ def plot_route():
 # Main Function
 # ==========================
 if __name__ == "__main__":
-    API_KEY = "YOUR_API_KEY"
-    LOCATION = "YOUR_LOCATION"
-    
+    API_KEY = "AIzaSyARMtPw0qvuUU3BT_wjJx5COa_8zhTX31Q"
+    LOCATION = "39.7684,-86.1581" 
     # Fetch and Clean Data
     raw_data = fetch_food_truck_data(API_KEY, LOCATION)
     df = clean_data(raw_data)
-    df.to_csv('data/food_truck_data.csv', index=False)
+    df.to_csv('food_truck_data.csv', index=False)
     
     # Basic Analysis
     avg_rating, most_common_cuisine = basic_analysis(df)
@@ -99,4 +98,3 @@ if __name__ == "__main__":
     
     # Route Visualization (Example)
     plot_route()
-
