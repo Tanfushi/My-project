@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanfu's Personal Website</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Tanfu's Zone</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <h2>Hi, I'm Tanfu</h2>
+            <p>Welcome to my personal zone. I'm a passionate developer who loves coding and building web experiences.</p>
+            <a href="#contact" class="btn">Contact Me</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2>About Me</h2>
+            <div class="about-content">
+                <img src="your-photo.jpg" alt="Tanfu's Photo">
+                <p>Hello! I'm Tanfu, a web developer with a passion for creating dynamic and user-friendly websites. I have experience in various web technologies like HTML, CSS, JavaScript, and frameworks like React.js. I'm constantly learning and love to work on innovative projects.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+        <div class="container">
+            <h2>My Projects</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h3>Project 1</h3>
+                    <p>This is a web application built with React and Node.js. It helps users manage their tasks efficiently.</p>
+                </div>
+                <div class="project-card">
+                    <h3>Project 2</h3>
+                    <p>A responsive e-commerce website built with HTML, CSS, and JavaScript. Features a clean design and easy navigation.</p>
+                </div>
+                <div class="project-card">
+                    <h3>Project 3</h3>
+                    <p>This is a machine learning project, utilizing Python and TensorFlow to analyze data and predict outcomes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2>Contact Me</h2>
+            <div class="contact-content">
+                <p>If you have any questions or would like to work together, feel free to reach out via the form below or connect with me on social media!</p>
+                <form id="contact-form">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" required>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                    <label for="message">Message:</label>
+                    <textarea id="message" required></textarea>
+                    <button type="submit">Send Message</button>
+                </form>
+                <div class="social-links">
+                    <a href="https://github.com/yourprofile" target="_blank">GitHub</a>
+                    <a href="https://www.linkedin.com/in/yourprofile" target="_blank">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Tanfu's Zone. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript 文件 -->
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // 阻止表单默认提交
+
+            // 获取表单输入值
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            // 发送表单数据到服务器
+            fetch('http://localhost:3001/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, message }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Something went wrong');
+                }
+            })
+            .then(data => {
+                alert('Message sent successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send message.');
+            });
+        });
+    </script>
+</body>
+</html>
+
+
