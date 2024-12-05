@@ -1,0 +1,395 @@
+/* 通用样式 */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+    overflow-x: hidden;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+#background-video {
+    position: fixed; /* 保证视频固定在背景 */
+    top: 0;
+    left: 0;
+    width: 100vw; /* 视频占满全屏宽度 */
+    height: 100vh; /* 视频占满全屏高度 */
+    object-fit: cover; /* 视频保持比例覆盖背景 */
+    z-index: -1; /* 确保视频在其他内容的下方 */
+    opacity: 0.5; /* 设置背景透明度，范围为 0-1 */
+    pointer-events: none; /* 禁止鼠标事件，防止视频阻碍内容操作 */
+}
+
+/* Header */
+header {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd; /* 添加底部边框 */
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between; /* 左右两侧对齐 */
+    align-items: center;
+    max-width: 1200px; /* 最大宽度限制 */
+    margin: 0 auto; /* 居中对齐 */
+}
+
+/* Logo 样式 */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Logo 和文字之间的间距 */
+}
+
+.logo {
+    max-width: 50px; /* 控制 logo 尺寸 */
+    height: auto;
+}
+
+.logo-container span {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #000; /* 文字颜色 */
+}
+
+/* 导航菜单样式 */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px; /* 菜单项间距 */
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    position: relative;
+}
+
+nav ul li a {
+    text-decoration: none;
+    font-size: 1rem;
+    color: #000;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #007bff; /* 悬停时变为蓝色 */
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column; /* 在小屏幕上改为垂直排列 */
+        align-items: flex-start;
+    }
+
+    nav ul {
+        flex-direction: column; /* 菜单改为垂直 */
+        gap: 10px;
+    }
+}
+
+
+/* Hero Section */
+#hero {
+    padding: 120px 50px; /* 左右间距 */
+    color: white;
+    background-color: #555; /* 深灰色背景 */
+    background: rgba(0, 0, 0, 0.3);
+    text-align: left; /* 内容靠左对齐 */
+    max-width: 50%; /* 调整宽度 */
+    margin: 100px 0 0 10%; /* 顶部与左侧的间距 */
+    border-radius: 10px;
+}
+
+#hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+#hero p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+#hero .btn {
+    background-color: #00d4ff;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#hero .btn:hover {
+    background-color: #007bb5; /* 深蓝悬停 */
+}
+
+/* About Section */
+/* About Section */
+#about {
+    display: flex; /* 使用 Flexbox 布局 */
+    align-items: center; /* 垂直居中对齐 */
+    justify-content: space-between; /* 左右分布内容 */
+    padding: 50px 20px; /* 上下和左右内边距 */
+    background-color: #fff; /* 白色背景 */
+    text-align: left; /* 左对齐文本 */
+    gap: 20px;
+}
+
+#about h2 {
+    color: #004aad; /* 标题颜色为深蓝色 */
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+#about p {
+    max-width: 50%; /* 左侧文字部分占页面宽度的一半 */
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+#about img {
+    max-width: 100%; /* 将图片宽度调整为容器的60% */
+    border-radius: 10px; /* 圆角 */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* 增加更显著的阴影 */
+    margin-left: 20px; /* 与文字部分保持一定距离 */
+}
+
+
+/* Technology Section */
+#technology {
+    background-color: #f0f8ff; /* 浅蓝背景 */
+    padding: 50px 0;
+    text-align: center;
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.tech-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    text-align: center;
+}
+
+.tech-card:hover {
+    transform: translateY(-10px);
+}
+
+.tech-card h3 {
+    font-size: 1.5rem;
+    color: #004aad;
+    margin-bottom: 10px;
+}
+
+/* Products Section */
+#products {
+    padding: 50px 0;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background-color: #eaf6ff; /* 浅蓝 */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+}
+
+.product-card h3 {
+    color: #004aad;
+    font-size: 1.5rem;
+}
+
+/* Testimonials Section */
+#testimonials {
+    background-color: #f0f8ff; /* 浅蓝背景 */
+    padding: 50px 0;
+    text-align: center;
+}
+
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.testimonial {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.testimonial:hover {
+    transform: translateY(-10px);
+}
+
+.testimonial p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.testimonial h4 {
+    color: #004aad;
+    margin-top: 10px;
+}
+
+/* Contact Section */
+#contact {
+    background-color: #f9f9f9;
+    padding: 50px 0;
+    text-align: left;
+}
+
+#contact h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #004aad;
+}
+
+.contact-content {
+    display: flex;
+    justify-content: space-between; /* 左右布局 */
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap; /* 小屏幕适配 */
+}
+
+.contact-form-container {
+    flex: 1; /* 左侧表单占据剩余空间 */
+    max-width: 60%; /* 左侧最大宽度 */
+}
+
+.contact-image-container {
+    flex: 1; /* 右侧图片占据剩余空间 */
+    text-align: center; /* 图片居中对齐 */
+}
+
+.contact-image {
+    max-width: 80%; /* 图片宽度占容器的 80% */
+    border-radius: 10px; /* 圆角 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+}
+
+/* 表单样式 */
+#contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* 表单项之间的间距 */
+}
+
+#contact-form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+#contact-form input, 
+#contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+#contact-form button {
+    background-color: #004aad;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#contact-form button:hover {
+    background-color: #003080;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .contact-content {
+        flex-direction: column; /* 小屏幕上下排列 */
+        align-items: center;
+    }
+
+    .contact-form-container, 
+    .contact-image-container {
+        max-width: 100%; /* 宽度占满 */
+        text-align: center; /* 居中对齐 */
+    }
+
+    .contact-image {
+        max-width: 60%; /* 图片在小屏幕上占据更小宽度 */
+    }
+}
+
+/* Footer */
+footer {
+    background-color: #003366; /* 深蓝 */
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    #hero {
+        max-width: 90%; /* 小屏幕上内容区域全宽 */
+        margin: 120px auto; /* 居中显示 */
+    }
+
+    .tech-grid, .product-grid, .testimonial-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        width: 90%;
+    }
+
+    nav ul {
+        display: none;
+        flex-direction: column;
+        background-color: #004aad;
+        position: absolute;
+        top: 60px;
+        width: 100%;
+        text-align: center;
+    }
+
+    nav ul.active {
+        display: flex;
+    }
+}
