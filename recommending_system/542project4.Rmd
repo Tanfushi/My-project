@@ -1,0 +1,240 @@
+---
+title: "542_project4"
+author: "Tanfu Shi, Machi Takeda, Navya Gupta"
+date: "2024-12-14"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+team contribution: We first worked on the assignment individually, and then worked together to compare/discuss the results, improve the code, and generate the final report. Therefore, everyone in this group contributed equally to complete this assignment.
+
+## load package and data
+```{r}
+library(dplyr)
+library(ggplot2)
+library(recommenderlab)
+library(DT)
+library(data.table)
+library(reshape2)
+
+myurl = "https://liangfgithub.github.io/MovieData/"
+
+ratings <- read.csv("C:/Users/14946/Downloads/Rmat.csv", row.names = 1)
+
+```
+
+##popularity
+The most popular is defined by the one with highest average scores
+```{r}
+avg_ratings <- colMeans(ratings, na.rm = TRUE)
+rating_count <- colSums(!is.na(ratings))
+
+# 筛选流行电影
+popular_movies <- data.frame(
+  MovieID = colnames(ratings),
+  AvgRating = avg_ratings,
+  RatingCount = rating_count
+) %>%
+  filter(AvgRating > 4, RatingCount >= 50) %>%
+  arrange(desc(AvgRating), desc(RatingCount)) %>%
+  head(10)
+
+# 输出流行电影
+print(popular_movies)
+
+```
+algorithm
+```{r}
+cosine_similarity_sparse <- function(mat) {
+  mat <- mat[, colSums(mat^2) > 0, drop = FALSE] # 移除全零列
+  mat <- mat[rowSums(mat^2) > 0, , drop = FALSE] # 移除全零行
+  
+  sim <- as.matrix(crossprod(mat))  # 列与列的点积
+  norms <- sqrt(colSums(mat^2))     # 每列的范数
+  sim <- sim / outer(norms, norms)  # 归一化
+  diag(sim) <- NA                   # 设置对角线为 NA
+  return(round(sim, 7))             # 精确到小数点后 7 位
+}
+
+
+myIBCF <- function(newuser, similarity_matrix, k = 10, global_mean = NULL) {
+  predictions <- numeric(ncol(similarity_matrix))
+  names(predictions) <- colnames(similarity_matrix)
+  
+  for (i in seq_along(predictions)) {
+    if (is.na(newuser[i])) { # 如果用户未评分该电影
+      similar_items <- order(similarity_matrix[i, ], decreasing = TRUE, na.last = NA)[1:k]
+      similarities <- similarity_matrix[i, similar_items]
+      user_ratings <- newuser[similar_items]
+      
+      # 计算分子和分母
+      numerator <- sum(similarities * user_ratings, na.rm = TRUE)
+      denominator <- sum(similarities, na.rm = TRUE)
+      
+      # 计算预测评分
+      if (denominator > 0) {
+        raw_prediction <- numerator / denominator + mean(user_ratings, na.rm = TRUE)
+        predictions[i] <- raw_prediction
+      } else {
+        # 分母为 0 时使用全局均值或流行度作为回退值
+        fallback_prediction <- if (!is.null(global_mean)) global_mean else mean(newuser, na.rm = TRUE)
+        predictions[i] <- fallback_prediction
+      }
+    }
+  }
+  
+  # 移除 NA 值并归一化到 0-5 范围
+  predictions <- na.omit(predictions)  # 移除 NA 值
+  min_pred <- min(predictions, na.rm = TRUE)
+  max_pred <- max(predictions, na.rm = TRUE)
+  predictions <- 5 * (predictions - min_pred) / (max_pred - min_pred)  # 线性归一化
+  
+  # 排序并返回前 k 个结果
+  return(sort(predictions, decreasing = TRUE, na.last = NA)[1:k])
+}
+
+
+
+# 加载评分矩阵
+ratings_sparse <- as(as.matrix(ratings), "sparseMatrix")
+
+# 中心化评分矩阵
+row_means <- rowMeans(as.matrix(ratings_sparse), na.rm = TRUE)
+row_means[is.na(row_means)] <- mean(row_means, na.rm = TRUE) # 用全局均值替换 NaN
+centered_ratings <- sweep(as.matrix(ratings_sparse), 1, row_means, FUN = "-", check.margin = FALSE)
+centered_ratings[is.na(centered_ratings)] <- 0 # 替换剩余的 NA 为 0
+centered_ratings_sparse <- as(centered_ratings, "sparseMatrix")
+
+# 生成相似矩阵
+similarity_matrix <- cosine_similarity_sparse(centered_ratings_sparse)
+
+
+```
+test
+```{r}
+user_u1181 <- as.numeric(ratings_sparse["u1181", ])
+names(user_u1181) <- colnames(ratings_sparse)
+recommendations_u1181 <- myIBCF(user_u1181, similarity_matrix)
+print("Top 10 recommendations for user 'u1181':")
+print(data.frame(
+  MovieID = names(recommendations_u1181),
+  PredictedRating = recommendations_u1181
+))
+
+# 假设用户的推荐
+hypothetical_user <- rep(NA, ncol(similarity_matrix))
+names(hypothetical_user) <- colnames(similarity_matrix)
+hypothetical_user["m1613"] <- 5
+hypothetical_user["m1755"] <- 4
+recommendations_hypothetical <- myIBCF(hypothetical_user, similarity_matrix)
+print("Top 10 recommendations for the hypothetical user:")
+print(data.frame(
+  MovieID = names(recommendations_hypothetical),
+  PredictedRating = recommendations_hypothetical
+))
+
+```
+shiny app
+```{r}
+library(shiny)
+
+# 将本地路径映射到 Shiny 的 Web 路径 "/MovieImages"
+addResourcePath("MovieImages", "C:/Users/14946/Downloads/MovieImages/MovieImages/")
+
+# 定义 UI
+ui <- fluidPage(
+  titlePanel("Movie Recommender System"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      h4("Rate the following movies (1-5):"),
+      
+      # 动态生成评分输入框和照片
+      uiOutput("movie_inputs"),
+      
+      actionButton("submit", "Get Recommendations")
+    ),
+    
+    mainPanel(
+      h4("Top 10 Movie Recommendations:"),
+      tableOutput("recommendations"),  # 显示推荐结果
+      uiOutput("movie_images")         # 动态展示推荐电影的图片
+    )
+  )
+)
+
+# 定义服务器逻辑
+server <- function(input, output, session) {
+  # 随机选择 5 部电影供评分
+  random_movies <- reactive({
+    sample(colnames(similarity_matrix), 5, replace = FALSE) # 随机选择 5 部电影
+  })
+  
+  # 动态生成评分输入框和照片
+  output$movie_inputs <- renderUI({
+    movie_ids <- random_movies()
+    lapply(movie_ids, function(movie) {
+      numeric_id <- gsub("m", "", movie) # 如果需要去掉 "m"，只保留数字部分
+      tags$div(
+        style = "margin-bottom: 20px;",
+        tags$img(src = paste0("/MovieImages/", numeric_id, ".jpg"), 
+                 height = "150px", width = "100px", style = "display: block; margin-bottom: 5px;"),
+        numericInput(
+          inputId = paste0("movie_", movie),
+          label = paste("Rate movie", numeric_id, "(1-5):"),
+          value = NA, min = 1, max = 5
+        )
+      )
+    })
+  })
+  
+  # 监听用户点击 "Get Recommendations" 按钮
+  observeEvent(input$submit, {
+    # 初始化用户评分向量
+    new_user <- rep(NA, ncol(similarity_matrix))
+    names(new_user) <- colnames(similarity_matrix)
+    
+    # 获取用户评分
+    rated_movies <- random_movies()
+    for (movie in rated_movies) {
+      movie_input_id <- paste0("movie_", movie)
+      new_user[movie] <- input[[movie_input_id]]
+    }
+    
+    # 生成推荐
+    recommendations <- myIBCF(new_user, similarity_matrix)
+    
+    # 输出推荐结果到表格
+    output$recommendations <- renderTable({
+      data.frame(
+        MovieID = names(recommendations),
+        PredictedRating = recommendations
+      )
+    })
+    
+    # 动态生成推荐电影的图片展示
+    output$movie_images <- renderUI({
+      lapply(names(recommendations), function(movie_id) {
+        numeric_id <- gsub("m", "", movie_id) # 如果需要去掉 "m"，只保留数字部分
+        tags$div(
+          style = "display: inline-block; margin: 10px; text-align: center;",
+          tags$h5(paste("Movie:", numeric_id)),
+          tags$img(src = paste0("/MovieImages/", numeric_id, ".jpg"), 
+                   height = "150px", width = "100px"),
+          tags$br()
+        )
+      })
+    })
+  })
+}
+
+# 启动 Shiny 应用
+shinyApp(ui = ui, server = server)
+
+```
+
+
+
